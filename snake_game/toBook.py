@@ -1,12 +1,18 @@
 import pygame
 import sys
+ #Add code below
 import random
+
+check_errors = pygame.init()
 
 
 frame_size_x = 720
 frame_size_y = 480
 pygame.display.set_caption('Snake Game')
 game_window = pygame.display.set_mode((frame_size_x, frame_size_y))
+# add code below
+fps_controller = pygame.time.Clock()
+
 
 
 white = pygame.Color(255,255,255)
@@ -17,13 +23,12 @@ blue = pygame.Color(0,0,255)
 
 direction = 'RIGHT'
 change_to = direction
- #Add code below
+score = 0
 snake_pos = [100,50]
 snake_body = [[100,50],[100-10,50],[100-(2*10),50]]
-
-food_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
-food_spawn = True
-
+ #Add code below
+apple_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
+apple_spawn = True
 
 while True:
 
@@ -43,12 +48,58 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
 
+    if change_to == 'UP' and direction != 'DOWN':
+        direction = 'UP'
+    if change_to == 'DOWN' and direction != 'UP':
+        direction = 'DOWN'
+    if change_to == 'LEFT' and direction != 'RIGHT':
+        direction = 'LEFT'
+    if change_to == 'RIGHT' and direction != 'LEFT':
+        direction = 'RIGHT'
+    # Add Code below
+    if direction == 'UP':
+        snake_pos[1] -= 10
+    if direction == 'DOWN':
+        snake_pos[1] += 10
+    if direction == 'LEFT':
+        snake_pos[0] -= 10
+    if direction == 'RIGHT':
+        snake_pos[0] += 10
 
+
+    # print(direction)
+    # snake_body.insert(0, list(snake_pos))
+    # if snake_pos[0] == apple_pos[0] and snake_pos[1] == apple_pos[1]:
+    #     # score += 1
+    #     apple_spawn = False
+    # else:
+    #     snake_body.pop()
+   #add code above
+    # game_window.fill(white)
     game_window.fill(white)
     print(change_to)
-    #Add code below
     snake_body.insert(0, list(snake_pos))
+    # add code below
+    if snake_pos[0] == apple_pos[0] and snake_pos[1] == apple_pos[1]:
+        score += 1
+        apple_spawn = False
+    else:
+        snake_body.pop()
+
     for pos in snake_body:
         pygame.draw.rect(game_window, green, pygame.Rect(pos[0], pos[1], 10, 10))
+    #Add code below
+    if not apple_spawn:
+        apple_pos = [random.randrange(1, (frame_size_x//10)) * 10, random.randrange(1, (frame_size_y//10)) * 10]
+    apple_spawn = True
+    pygame.draw.rect(game_window, red, pygame.Rect(apple_pos[0], apple_pos[1], 10, 10))
 
+    # score_font = pygame.font.SysFont('Poppins', 20)
+    # score_surface = score_font.render('Score : ' + str(score), True, black)
+    # score_rect = score_surface.get_rect()
+    # score_rect.midtop = (frame_size_x/10, 15)
+    # game_window.blit(score_surface, score_rect)
+    #add code above
     pygame.display.update()
+    # add code below
+    fps_controller.tick(10)
