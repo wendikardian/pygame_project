@@ -46,8 +46,14 @@ def mainGame():
     player_x = int(frame_size_x/5)
     player_y = int(frame_size_x/2)
     base_x = 0
-
-    # Create 2 pipes for blitting on the screen
+    player_flapped = False # It is true only when the bird is flapping
+    # player_min_vel_y = -8
+    player_flap_acc = -8 # velocity while flapping
+    pipe_vel_x = -4
+    player_vel_y = -9
+    player_max_vel_y = 10
+    player_acc_y = 1
+    # Add code
     newPipe1 = getRandomPipe()
     newPipe2 = getRandomPipe()
 
@@ -61,16 +67,6 @@ def mainGame():
         {'x': frame_size_x+200, 'y':newPipe1[1]['y']},
         {'x': frame_size_x+200+(frame_size_x/2), 'y':newPipe2[1]['y']},
     ]
-
-    pipe_vel_x = -4
-    player_vel_y = -9
-    player_max_vel_y = 10
-    # player_min_vel_y = -8
-    player_acc_y = 1
-
-    player_flap_acc = -8 # velocity while flapping
-    player_flapped = False # It is true only when the bird is flapping
-
 
     while True:
         for event in pygame.event.get():
