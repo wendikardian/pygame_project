@@ -10,9 +10,10 @@ frame_size_y = 511
 window_screen = pygame.display.set_mode((frame_size_x, frame_size_y))
 game_sprites = {}
 game_sounds = {}
-player = 'gallery/sprites/bird.png'
-background = 'gallery/sprites/background.png'
-pipe = 'gallery/sprites/pipe.png'
+# player = 'gallery/sprites/bird.png'
+player = 'gallery/sprites/astro.png'
+background = 'gallery/sprites/bg.jpg'
+pipe = 'gallery/sprites/pipe_2.png'
 ground_by = frame_size_y * 0.8
 
 def welcomeScreen():
@@ -36,6 +37,14 @@ def welcomeScreen():
             else:
                 window_screen.blit(game_sprites['background'], (0, 0))
                 window_screen.blit(game_sprites['player'], (player_x, player_y))
+                # add Text in Pygame in window_screen using Impact font with 32 size, the text said "Astro Man"
+                welcome_text = pygame.font.SysFont('Impact', 32)
+                welcome_surface = welcome_text.render("Astro Man", True, (255,255,255))
+                score_rect = welcome_surface.get_rect()
+                score_rect.midtop = (frame_size_x/2, 32)
+
+                window_screen.blit(welcome_surface, score_rect)
+
                 # window_screen.blit(game_sprites['message'], (messagex,messagey ))
                 window_screen.blit(game_sprites['base'], (base_x, ground_by))
                 pygame.display.update()
@@ -58,12 +67,12 @@ def mainGame():
     newPipe2 = getRandomPipe()
 
     # my List of upper pipes
-    upperPipes = [
+    upper_pipes = [
         {'x': frame_size_x+200, 'y':newPipe1[0]['y']},
         {'x': frame_size_x+200+(frame_size_x/2), 'y':newPipe2[0]['y']},
     ]
     # my List of lower pipes
-    lowerPipes = [
+    lower_pipes = [
         {'x': frame_size_x+200, 'y':newPipe1[1]['y']},
         {'x': frame_size_x+200+(frame_size_x/2), 'y':newPipe2[1]['y']},
     ]
@@ -80,13 +89,13 @@ def mainGame():
                     game_sounds['wing'].play()
 
 
-        crashTest = isCollide(player_x, player_y, upperPipes, lowerPipes) # This function will return true if the player is crashed
+        crashTest = isCollide(player_x, player_y, upper_pipes, lower_pipes) # This function will return true if the player is crashed
         if crashTest:
             return
 
         #check for score
         playerMidPos = player_x + game_sprites['player'].get_width()/2
-        for pipe in upperPipes:
+        for pipe in upper_pipes:
             pipeMidPos = pipe['x'] + game_sprites['pipe'][0].get_width()/2
             if pipeMidPos<= playerMidPos < pipeMidPos +4:
                 score +=1
@@ -103,53 +112,58 @@ def mainGame():
         player_y = player_y + min(player_vel_y, ground_by - player_y - playerHeight)
 
         # move pipes to the left
-        for upperPipe , lowerPipe in zip(upperPipes, lowerPipes):
+        for upperPipe , lowerPipe in zip(upper_pipes, lower_pipes):
             upperPipe['x'] += pipe_vel_x
             lowerPipe['x'] += pipe_vel_x
 
         # Add a new pipe when the first is about to cross the leftmost part of the screen
-        if 0<upperPipes[0]['x']<5:
+        if 0<upper_pipes[0]['x']<5:
             newpipe = getRandomPipe()
-            upperPipes.append(newpipe[0])
-            lowerPipes.append(newpipe[1])
+            upper_pipes.append(newpipe[0])
+            lower_pipes.append(newpipe[1])
 
         # if the pipe is out of the screen, remove it
-        if upperPipes[0]['x'] < -game_sprites['pipe'][0].get_width():
-            upperPipes.pop(0)
-            lowerPipes.pop(0)
+        if upper_pipes[0]['x'] < -game_sprites['pipe'][0].get_width():
+            upper_pipes.pop(0)
+            lower_pipes.pop(0)
 
         # Lets blit our sprites now
         window_screen.blit(game_sprites['background'], (0, 0))
-        for upperPipe, lowerPipe in zip(upperPipes, lowerPipes):
+        for upperPipe, lowerPipe in zip(upper_pipes, lower_pipes):
             window_screen.blit(game_sprites['pipe'][0], (upperPipe['x'], upperPipe['y']))
             window_screen.blit(game_sprites['pipe'][1], (lowerPipe['x'], lowerPipe['y']))
 
         window_screen.blit(game_sprites['base'], (base_x, ground_by))
         window_screen.blit(game_sprites['player'], (player_x, player_y))
-        myDigits = [int(x) for x in list(str(score))]
-        width = 0
-        for digit in myDigits:
-            width += game_sprites['numbers'][digit].get_width()
-        Xoffset = (frame_size_x - width)/2
+        # myDigits = [int(x) for x in list(str(score))]
+        # width = 0
+        # for digit in myDigits:
+        #     width += game_sprites['numbers'][digit].get_width()
+        # Xoffset = (frame_size_x - width)/2
 
-        for digit in myDigits:
-            window_screen.blit(game_sprites['numbers'][digit], (Xoffset, frame_size_y*0.12))
-            Xoffset += game_sprites['numbers'][digit].get_width()
+        # for digit in myDigits:
+        #     window_screen.blit(game_sprites['numbers'][digit], (Xoffset, frame_size_y*0.12))
+        #     Xoffset += game_sprites['numbers'][digit].get_width()
+        score_font = pygame.font.SysFont('Poppins', 32)
+        score_surface = score_font.render(str(score), True, (255,255,255))
+        score_rect = score_surface.get_rect()
+        score_rect.midtop = (frame_size_x/2, 32)
+        window_screen.blit(score_surface, score_rect)
         pygame.display.update()
         fps_controller.tick(FPS)
 
-def isCollide(player_x, player_y, upperPipes, lowerPipes):
-    if player_y> ground_by - 25  or player_y<0:
+def isCollide(player_x, player_y, upper_pipes, lower_pipes):
+    if player_y > frame_size_y * 0.7 or player_y<0:
         game_sounds['hit'].play()
         return True
 
-    for pipe in upperPipes:
+    for pipe in upper_pipes:
         pipeHeight = game_sprites['pipe'][0].get_height()
         if(player_y < pipeHeight + pipe['y'] and abs(player_x - pipe['x']) < game_sprites['pipe'][0].get_width()):
             game_sounds['hit'].play()
             return True
 
-    for pipe in lowerPipes:
+    for pipe in lower_pipes:
         if (player_y + game_sprites['player'].get_height() > pipe['y']) and abs(player_x - pipe['x']) < game_sprites['pipe'][0].get_width():
             game_sounds['hit'].play()
             return True
@@ -179,7 +193,7 @@ def getRandomPipe():
 
 pygame.init() # Initialize all pygame's modules
 fps_controller = pygame.time.Clock()
-pygame.display.set_caption('Flappy Bird')
+pygame.display.set_caption('Astro Man')
 game_sprites['numbers'] = (
     pygame.image.load('gallery/sprites/0.png').convert_alpha(),
     pygame.image.load('gallery/sprites/1.png').convert_alpha(),
@@ -203,9 +217,9 @@ pygame.image.load(pipe).convert_alpha()
 # game_sounds['die'] = pygame.mixer.Sound('gallery/audio/die.wav')
 game_sounds['hit'] = pygame.mixer.Sound('gallery/audio/hit.wav')
 game_sounds['point'] = pygame.mixer.Sound('gallery/audio/point.wav')
-game_sounds['wing'] = pygame.mixer.Sound('gallery/audio/wing.wav')
+game_sounds['wing'] = pygame.mixer.Sound('gallery/audio/jump.wav')
 
-game_sprites['base'] =pygame.image.load('gallery/sprites/base.png').convert_alpha()
+game_sprites['base'] =pygame.image.load('gallery/sprites/base_1.jpg').convert_alpha()
 game_sprites['background'] = pygame.image.load(background).convert()
 game_sprites['player'] = pygame.image.load(player).convert_alpha()
 while True:
