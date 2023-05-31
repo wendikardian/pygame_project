@@ -2,11 +2,13 @@ import random # For generating random numbers
 import sys # We will use sys.exit to exit the program
 import pygame
 from pygame.locals import * # Basic pygame imports
+import time # To use sleep function
 #
 # Global Variables for the game
 FPS = 32
 frame_size_x = 289
 frame_size_y = 511
+hight_score = 0
 window_screen = pygame.display.set_mode((frame_size_x, frame_size_y))
 game_sprites = {}
 game_sounds = {}
@@ -45,6 +47,12 @@ def welcomeScreen():
 
                 window_screen.blit(welcome_surface, score_rect)
 
+                hight_score_font = pygame.font.SysFont('Impact', 20)
+                hight_score_surface = hight_score_font.render("High Score : " + str(hight_score), True, (255,255,255))
+                hight_score_rect = hight_score_surface.get_rect()
+                hight_score_rect.midtop = (frame_size_x/2, 100)
+                window_screen.blit(hight_score_surface, hight_score_rect)
+
                 # window_screen.blit(game_sprites['message'], (messagex,messagey ))
                 window_screen.blit(game_sprites['base'], (base_x, ground_by))
                 pygame.display.update()
@@ -62,6 +70,7 @@ def mainGame():
     player_vel_y = -9
     player_max_vel_y = 10
     player_acc_y = 1
+    global hight_score
     # Add code
     newPipe1 = getRandomPipe()
     newPipe2 = getRandomPipe()
@@ -89,8 +98,13 @@ def mainGame():
                     game_sounds['wing'].play()
 
 
+
         crashTest = isCollide(player_x, player_y, upper_pipes, lower_pipes) # This function will return true if the player is crashed
         if crashTest:
+            if score > hight_score :
+                hight_score = score
+            time.sleep(1)
+            # game_over(score)
             return
 
         #check for score
@@ -102,7 +116,7 @@ def mainGame():
                 print(f"Your score is {score}")
                 game_sounds['point'].play()
 
-
+        
         if player_vel_y <player_max_vel_y and not player_flapped:
             player_vel_y += player_acc_y
 
@@ -151,6 +165,8 @@ def mainGame():
         window_screen.blit(score_surface, score_rect)
         pygame.display.update()
         fps_controller.tick(FPS)
+
+
 
 def isCollide(player_x, player_y, upper_pipes, lower_pipes):
     if player_y > frame_size_y * 0.7 or player_y<0:
@@ -225,3 +241,4 @@ game_sprites['player'] = pygame.image.load(player).convert_alpha()
 while True:
     welcomeScreen() # Shows welcome screen to the user until he presses a button
     mainGame() # This is the main game function
+    # game_over() # Shows the game over screen
