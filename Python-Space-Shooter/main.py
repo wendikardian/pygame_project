@@ -4,16 +4,16 @@ import pygame
 pygame.font.init()  # Initialise pygame fonts
 pygame.mixer.init()  # Initialise pygame sound effects handler
 
-WIDTH, HEIGHT = 900, 500  # WINDOW RESOLUTION
-WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))  # SET WINDOW RESOLUTION
-pygame.display.set_caption("Space Shooter")  # SET WINDOW TITLE
+frame_size_x, frame_size_y = 900, 500  # window_screen RESOLUTION
+window_screen = pygame.display.set_mode((frame_size_x, frame_size_y))  # SET window_screen RESOLUTION
+pygame.display.set_caption("Space Shooter")  # SET window_screen TITLE
 
-WHITE = (255, 255, 255)  # RGB Code for White
-BLACK = (0, 0, 0)  # RGB Code for Black
-GREEN = (110, 194, 54)  # RGB Code for Green Bullet
-BLUE = (53, 180, 235)  # RGB Code for Blue Bullet
+white = (255, 255, 255)  # RGB Code for White
+black = (0, 0, 0)  # RGB Code for Black
+green = (110, 194, 54)  # RGB Code for Green Bullet
+blue = (53, 180, 235)  # RGB Code for Blue Bullet
 
-BORDER = pygame.Rect((WIDTH // 2) - 5, 0, 10, HEIGHT)  # Create Window Divide
+BORDER = pygame.Rect((frame_size_x // 2) - 5, 0, 10, frame_size_y)  # Create Window Divide
 
 BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join('Assets', 'sfx_hit.ogg'))  # BULLET HIT PLAYER SOUND EFFECT
 BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join('Assets', 'sfx_fire.ogg'))  # BULLET FIRED SOUND EFFECT
@@ -33,39 +33,39 @@ GREEN_HIT = pygame.USEREVENT + 1
 BLUE_HIT = pygame.USEREVENT + 2
 
 GREEN_SHIP_IMG = pygame.transform.rotate(pygame.image.load(os.path.join('Assets', 'shipGreen.png')),
-                                         270)  # IMPORT GREEN SPACESHIP IMAGE
+                                         270)  # IMPORT green SPACESHIP IMAGE
 BLUE_SHIP_IMG = pygame.transform.rotate(pygame.image.load(os.path.join('Assets', 'shipBlue.png')),
-                                        90)  # IMPORT BLUE SPACESHIP IMAGE
+                                        90)  # IMPORT blue SPACESHIP IMAGE
 
-GREEN_SHIP = pygame.transform.scale(GREEN_SHIP_IMG, (SHIP_WIDTH, SHIP_HEIGHT))  # RESCALE GREEN SPACESHIP IMAGE
-BLUE_SHIP = pygame.transform.scale(BLUE_SHIP_IMG, (SHIP_WIDTH, SHIP_HEIGHT))  # RESCALE BLUE SPACESHIP IMAGE
+GREEN_SHIP = pygame.transform.scale(GREEN_SHIP_IMG, (SHIP_WIDTH, SHIP_HEIGHT))  # RESCALE green SPACESHIP IMAGE
+BLUE_SHIP = pygame.transform.scale(BLUE_SHIP_IMG, (SHIP_WIDTH, SHIP_HEIGHT))  # RESCALE blue SPACESHIP IMAGE
 
 BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join('Assets', 'background.png')),
-                                    (WIDTH, HEIGHT))  # IMPORT BACKGROUND IMAGE
+                                    (frame_size_x, frame_size_y))  # IMPORT BACKGROUND IMAGE
 
 
-# DRAW GAME ASSETS IN WINDOW
+# DRAW GAME ASSETS IN window_screen
 def draw_window(green, blue, green_bullets, blue_bullets, green_health, blue_health):
-    WINDOW.blit(BACKGROUND, (0, 0))  # DRAW BACKGROUND IMAGE
-    pygame.draw.rect(WINDOW, BLACK, BORDER)  # DRAW BORDER
+    window_screen.blit(BACKGROUND, (0, 0))  # DRAW BACKGROUND IMAGE
+    pygame.draw.rect(window_screen, black, BORDER)  # DRAW BORDER
 
-    green_health_text = HEALTH_FONT.render("Health: " + str(green_health), 1, WHITE)
-    blue_health_text = HEALTH_FONT.render("Health: " + str(blue_health), 1, WHITE)
-    WINDOW.blit(green_health_text, (WIDTH - green_health_text.get_width() - 10, 10))  # DISPLAY GREEN HEALTH
-    WINDOW.blit(blue_health_text, (10, 10))  # DISPLAY BLUE HEALTH
+    green_health_text = HEALTH_FONT.render("Health: " + str(green_health), 1, white)
+    blue_health_text = HEALTH_FONT.render("Health: " + str(blue_health), 1, white)
+    window_screen.blit(green_health_text, (frame_size_x - green_health_text.get_width() - 10, 10))  # DISPLAY green HEALTH
+    window_screen.blit(blue_health_text, (10, 10))  # DISPLAY blue HEALTH
 
-    WINDOW.blit(GREEN_SHIP, (green.x, green.y))  # Used to show Green Spaceship on screen
-    WINDOW.blit(BLUE_SHIP, (blue.x, blue.y))  # Used to show Blue Spaceship on screen
+    window_screen.blit(GREEN_SHIP, (green.x, green.y))  # Used to show Green Spaceship on screen
+    window_screen.blit(BLUE_SHIP, (blue.x, blue.y))  # Used to show Blue Spaceship on screen
 
     for bullet in green_bullets:
-        pygame.draw.rect(WINDOW, GREEN, bullet)  # DRAW GREEN BULLETS
+        pygame.draw.rect(window_screen, green, bullet)  # DRAW green BULLETS
     for bullet in blue_bullets:
-        pygame.draw.rect(WINDOW, BLUE, bullet)  # DRAW BLUE BULLETS
+        pygame.draw.rect(window_screen, blue, bullet)  # DRAW blue BULLETS
 
     pygame.display.update()  # Update Screen
 
 
-# HANDLE GREEN SPACESHIP MOVEMENT FROM PLAYER INPUT
+# HANDLE green SPACESHIP MOVEMENT FROM PLAYER INPUT
 def green_movement_handler(keys_pressed, green):
     if keys_pressed[pygame.K_a] and green.x - VELOCITY > -5:  # LEFT
         green.x -= VELOCITY
@@ -73,19 +73,19 @@ def green_movement_handler(keys_pressed, green):
         green.x += VELOCITY
     if keys_pressed[pygame.K_w] and green.y - VELOCITY > 0:  # UP
         green.y -= VELOCITY
-    if keys_pressed[pygame.K_s] and green.y - VELOCITY + green.height < HEIGHT - 5:  # DOWN
+    if keys_pressed[pygame.K_s] and green.y - VELOCITY + green.height < frame_size_y - 5:  # DOWN
         green.y += VELOCITY
 
 
-# HANDLE GREEN SPACESHIP MOVEMENT FROM PLAYER INPUT
+# HANDLE green SPACESHIP MOVEMENT FROM PLAYER INPUT
 def blue_movement_handler(keys_pressed, blue):
     if keys_pressed[pygame.K_LEFT] and blue.x - VELOCITY > BORDER.x + BORDER.width - 5:  # LEFT
         blue.x -= VELOCITY
-    if keys_pressed[pygame.K_RIGHT] and blue.x - VELOCITY + blue.width < WIDTH - 5:  # RIGHT
+    if keys_pressed[pygame.K_RIGHT] and blue.x - VELOCITY + blue.width < frame_size_x - 5:  # RIGHT
         blue.x += VELOCITY
     if keys_pressed[pygame.K_UP] and blue.y - VELOCITY > 0:  # UP
         blue.y -= VELOCITY
-    if keys_pressed[pygame.K_DOWN] and blue.y - VELOCITY + blue.height < HEIGHT - 5:  # DOWN
+    if keys_pressed[pygame.K_DOWN] and blue.y - VELOCITY + blue.height < frame_size_y - 5:  # DOWN
         blue.y += VELOCITY
 
 
@@ -96,7 +96,7 @@ def handle_bullets(green_bullets, blue_bullets, green, blue):
         if blue.colliderect(bullet):
             pygame.event.post(pygame.event.Event(BLUE_HIT))
             green_bullets.remove(bullet)
-        elif bullet.x > WIDTH:
+        elif bullet.x > frame_size_x:
             green_bullets.remove(bullet)
 
     for bullet in blue_bullets:
@@ -110,8 +110,8 @@ def handle_bullets(green_bullets, blue_bullets, green, blue):
 
 # DISPLAY WINNER TEXT
 def draw_winner(text):
-    winner_text = WINNER_FONT.render(text, 1, WHITE)
-    WINDOW.blit(winner_text, (WIDTH // 2 - winner_text.get_width() / 2, HEIGHT // 2 - winner_text.get_height() / 2))
+    winner_text = WINNER_FONT.render(text, 1, white)
+    window_screen.blit(winner_text, (frame_size_x // 2 - winner_text.get_width() / 2, frame_size_y // 2 - winner_text.get_height() / 2))
     pygame.display.update()
     GAME_END_SOUND.play()
     pygame.time.delay(5000)
