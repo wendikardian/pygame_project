@@ -1,5 +1,6 @@
-import os
 import pygame
+from pygame.locals import *
+
 
 pygame.font.init()  # Initialise pygame fonts
 pygame.mixer.init()  # Initialise pygame sound effects handler
@@ -142,7 +143,7 @@ def main():
         for event in pygame.event.get():
 
             # Check if game is quit
-            if event.type == pygame.QUIT:
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 run = False
                 pygame.quit()
 
@@ -178,9 +179,7 @@ def main():
         keys_pressed = pygame.key.get_pressed()
         green_movement_handler(keys_pressed, green_rect)
         blue_movement_handler(keys_pressed, blue_rect)
-
         handle_bullets(green_bullets, blue_bullets, green_rect, blue_rect)
-
         draw_window(green_rect, blue_rect, green_bullets, blue_bullets, green_health, blue_health)
 
     main()
@@ -195,10 +194,9 @@ def welcome_screen():
         window_screen.blit(welcome_text, (frame_size_x // 2 - welcome_text.get_width() // 2, frame_size_y // 2 - welcome_text.get_height() // 2))
         pygame.display.update()
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 main()
 
-if __name__ == "__main__":
-    welcome_screen()
+welcome_screen()
