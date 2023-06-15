@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import random
 import sys
 
 pygame.font.init()
@@ -28,6 +29,8 @@ game_end_sound = pygame.mixer.Sound('gallery/audio/sfx_game_over.ogg')
 
 health_font = pygame.font.SysFont('Impact', 40)  # FONT FOR HEALTH DISPLAY
 winner_font = pygame.font.SysFont('Impact', 100)  # FONT FOR WINNER DISPLAY
+health_size = 30  # Size of Health Bar
+
 
 FPS = 60  # Game FPS
 velocity = 5  # Speed of Spaceship
@@ -42,15 +45,17 @@ blue_hit = pygame.USEREVENT + 2
 # green_ship_img = pygame.transform.rotate(pygame.image.load(os.path.join('Assets', 'shipGreen.png')),
 green_ship_img = pygame.transform.rotate(
     pygame.image.load('gallery/sprites/shipGreen.png'), 270)
+# IMPORT green SPACESHIP IMAGE
+# blue_ship_img = pygame.transform.rotate(pygame.image.load('gallery/sprites/shipBlue.png'),90)
 blue_ship_img = pygame.transform.rotate(
     pygame.image.load('gallery/sprites/shipBlue.png'), 90)
 green_ship = pygame.transform.scale(green_ship_img, (ship_width, ship_height))
 blue_ship = pygame.transform.scale(blue_ship_img, (ship_width, ship_height))
 
 background = pygame.transform.scale(pygame.image.load(
-    'gallery/sprites/background.png'), (frame_size_x, frame_size_y))
+    'gallery/sprites/background.png'), (frame_size_x, frame_size_y)).convert()
 space_shooter_logo = pygame.image.load('gallery/sprites/space_shooter.png').convert_alpha()
-# resize image space_shooter_logo
+############# Add code below to scale the logo to 300x150
 space_shooter_logo = pygame.transform.scale(
     space_shooter_logo, (300, 150)).convert_alpha()
 
@@ -78,6 +83,11 @@ def draw_window(green_rect, blue_rect, green_bullets, blue_bullets, green_health
     for bullet in blue_bullets:
         # pygame.draw.rect(window_screen, green, bullet)  # DRAW green BULLETS
         pygame.draw.rect(window_screen, blue, bullet)  # DRAW blue BULLETS
+    # create health medicine
+
+
+
+
 
     pygame.display.update()  # Update Screen
 
@@ -150,10 +160,12 @@ def main():
     green_health = 10
     blue_health = 10
     clock = pygame.time.Clock()
-    while True:
+    run = True
+    while run:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                run = False
                 pygame.quit()
                 sys.exit()
 
@@ -188,11 +200,32 @@ def main():
             draw_winner(winner_text)
             break
         keys_pressed = pygame.key.get_pressed()
+
+
         green_movement_handler(keys_pressed, green_rect)
         blue_movement_handler(keys_pressed, blue_rect)
         handle_bullets(green_bullets, blue_bullets, green_rect, blue_rect)
         draw_window(green_rect, blue_rect, green_bullets,
                     blue_bullets, green_health, blue_health)
+
+        # health = spawn_health()
+        # # make health move
+        # health.y += 1
+        # # draw health
+        # pygame.draw.rect(window_screen, green, health)
+        # # check if health collides with green
+        # if green_rect.colliderect(health):
+        #     green_health += 1
+        #     # health_sound.play()
+        #     health = spawn_health()
+        # # check if health collides with blue
+        # if blue_rect.colliderect(health):
+        #     blue_health += 1
+        #     # health_sound.play()
+        #     health = spawn_health()
+
+        # pygame.draw.rect(window_screen, green, health)
+
     welcome_screen()
 
 
@@ -208,6 +241,7 @@ def welcome_screen():
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 print("Start the game")
                 main()
