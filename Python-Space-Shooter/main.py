@@ -16,7 +16,7 @@ white = (255, 255, 255)  # RGB Code for White
 black = (0, 0, 0)  # RGB Code for Black
 green = (110, 194, 54)  # RGB Code for Green Bullet
 blue = (23, 54, 235)  # RGB Code for Blue Bullet
-
+#### Add Code below ####
 border = pygame.Rect((frame_size_x // 2) - 5, 0, 10,
                      frame_size_y)  # Create Window Divide
 
@@ -44,8 +44,8 @@ green_ship_img = pygame.transform.rotate(
     pygame.image.load('gallery/sprites/shipGreen.png'), 270)
 blue_ship_img = pygame.transform.rotate(
     pygame.image.load('gallery/sprites/shipBlue.png'), 90)
-green_ship = pygame.transform.scale(green_ship_img, (ship_width, ship_height))
-blue_ship = pygame.transform.scale(blue_ship_img, (ship_width, ship_height))
+green_ship = pygame.transform.scale(green_ship_img, (ship_width, ship_height)).convert_alpha()
+blue_ship = pygame.transform.scale(blue_ship_img, (ship_width, ship_height)).convert_alpha()
 
 background = pygame.transform.scale(pygame.image.load(
     'gallery/sprites/background.png'), (frame_size_x, frame_size_y))
@@ -76,7 +76,6 @@ def draw_window(green_rect, blue_rect, green_bullets, blue_bullets, green_health
     for bullet in green_bullets:
         pygame.draw.rect(window_screen, green, bullet)  # DRAW green BULLETS
     for bullet in blue_bullets:
-        # pygame.draw.rect(window_screen, green, bullet)  # DRAW green BULLETS
         pygame.draw.rect(window_screen, blue, bullet)  # DRAW blue BULLETS
 
     pygame.display.update()  # Update Screen
@@ -134,13 +133,6 @@ def draw_winner(text):
     game_end_sound.play()
     pygame.time.delay(5000)
 
-
-# spawn health
-def spawn_health():
-    health = pygame.Rect(random.randint(
-        0, frame_size_x - health_size), random.randint(0, frame_size_y - health_size), health_size, health_size)
-    return health
-
 # Main Function
 def main():
     green_rect = pygame.Rect(100, 100, ship_width, ship_height)
@@ -160,12 +152,12 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL and len(green_bullets) < max_num_of_bullet:
                     bullet = pygame.Rect(
-                        green_rect.x + green_rect.width, green_rect.y + green_rect.height // 2 - 2, 10, 5)
+                        green_rect.x + green_rect.width, green_rect.y + green_rect.height // 2, 10, 5)
                     green_bullets.append(bullet)
                     bullet_fire_sound.play()
                 if event.key == pygame.K_RCTRL and len(blue_bullets) < max_num_of_bullet:
                     bullet = pygame.Rect(
-                        blue_rect.x, blue_rect.y + blue_rect.height // 2 - 2, 10, 5)
+                        blue_rect.x, blue_rect.y + blue_rect.height // 2, 10, 5)
                     blue_bullets.append(bullet)
                     bullet_fire_sound.play()
 
@@ -187,7 +179,9 @@ def main():
         if winner_text != "":
             draw_winner(winner_text)
             break
+        ##### ADD CODE ABOVE #########
         keys_pressed = pygame.key.get_pressed()
+        print(keys_pressed[pygame.K_LEFT], keys_pressed[pygame.K_RIGHT])
         green_movement_handler(keys_pressed, green_rect)
         blue_movement_handler(keys_pressed, blue_rect)
         handle_bullets(green_bullets, blue_bullets, green_rect, blue_rect)
@@ -210,6 +204,7 @@ def welcome_screen():
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 print("Start the game")
+                #### add code below ###
                 main()
         pygame.display.update()
 
